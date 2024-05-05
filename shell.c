@@ -1,4 +1,5 @@
 #include "shell.h"
+#include <stdlib.h>
 
 char **args = NULL;
 int num_args = 0;
@@ -9,6 +10,7 @@ int main(void)
   char *home_dir = getenv("HOME");
   char *line = NULL;
   char cwd[MAX_CWD_SIZE];
+  int status = 0;
 
   while(1)
   {
@@ -21,7 +23,15 @@ int main(void)
       exit(EXIT_FAILURE);
     }
     printf("%s\n", cwd);
-    printf("$ ");
+    if (status == 0)
+    {
+      printf("$ ");
+    }
+
+    else 
+    {
+      printf(ANSI_COLOR_RED "$ " ANSI_COLOR_RESET);
+    }
 
     get_input(&line);
     parse_line(&line);
@@ -35,17 +45,17 @@ int main(void)
     {
       if (num_args == 1 || args[1] == NULL)
       {
-        change_cwd(&home_dir);
+        status = change_cwd(&home_dir);
       }
       else 
       {
-        change_cwd(&args[1]);
+        status = change_cwd(&args[1]);
       }
     }
 
     else 
     {
-      execute_command();
+      status = execute_command();
     }
 
     free(line);
@@ -113,15 +123,18 @@ void exit_shell(void)
 }
 
 
-void change_cwd(char **destination)
+int change_cwd(char **destination)
 {
   if (chdir(*destination) < 0)
   {
     printf("ERROR: The directory does not exist");
+    return -1;
   }
+
+  return 0;
 }
 
-void execute_command(void)
+int execute_command(void)
 {
   pid_t wpid;
   int status;
@@ -149,6 +162,18 @@ void execute_command(void)
       wpid = waitpid(pid, &status, WUNTRACED);
     } while (!WIFEXITED(status) && !WIFSIGNALED(status));
   }
+
+  if(WIFEXITED(status))
+  {
+    status = WEXITSTATUS(status);
+  }
+  else if(WIFSIGNALED(status))
+  {
+    status = WTERMSIG(status);
+  }
+
+  return status;
+
 }
 
 
