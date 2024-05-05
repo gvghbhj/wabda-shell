@@ -5,13 +5,38 @@ int num_args = 0;
 
 int main(void)
 {
+
+  char *home_dir = getenv("HOME");
   char *line = NULL;
-  char *cwd;
+  char cwd[MAX_CWD_SIZE];
+
   while(1)
   {
+    if (getcwd(cwd, MAX_CWD_SIZE) == NULL)
+    {
+      if (errno == ERANGE)
+        printf("[ERROR] cwdname length exceeds the buffer size\n");
+      else
+        perror("getcwd");
+      exit(EXIT_FAILURE);
+    }
+    printf("%s\n", cwd);
     printf("$ ");
+
     get_input(&line);
     parse_line(&line);
+
+    if (strcmp(args[0], "cd") == 0) 
+    {
+      if (num_args == 1 || args[1] == NULL)
+      {
+        change_cwd(&home_dir);
+      }
+      else 
+      {
+        change_cwd(&args[1]);
+      }
+    }
     for (int i = 0 ; i < num_args; i++)
     {
       if (strcmp(args[i], "exit") == 0)
@@ -20,9 +45,11 @@ int main(void)
       }
       printf("%s\n", args[i]);
     }
+
     free(line);
     line = NULL;
     free(args);
+    printf("\n");
   }
 }
 
@@ -81,4 +108,13 @@ void exit_shell(void)
 {
   printf("byeeee!\n");
   exit(EXIT_SUCCESS);
+}
+
+
+void change_cwd(char **destination)
+{
+  if (chdir(*destination) < 0)
+  {
+    printf("ERROR: The directory does not exist");
+  }
 }
