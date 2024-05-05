@@ -4,7 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void get_input(char **line);
+#define INIT_ARGS_SIZE 8
+#define ARG_SEPERATOR " \t\r\n\a"
 
+void get_input(char **line);
+void parse_line(char **line);
 
 #endif

@@ -1,16 +1,25 @@
 #include "shell.h"
+#include <stdlib.h>
+#include <string.h>
+
+char **args = NULL;
+int num_args = 0;
 
 int main(void)
 {
   char *line = NULL;
-
   while(1)
   {
     printf("$ ");
     get_input(&line);
-    printf("%s\n", line);
+    parse_line(&line);
+    for (int i = 0 ; i < num_args; i++)
+    {
+      printf("%s\n", args[i]);
+    }
     free(line);
     line = NULL;
+    free(args);
   }
 }
 
@@ -29,5 +38,38 @@ void get_input(char **line)
         perror("readline");
         exit(EXIT_FAILURE);
       }
+  }
+}
+
+void parse_line(char **line)
+{
+  num_args = 0;
+  static int args_max_size = INIT_ARGS_SIZE;
+  args = malloc(sizeof(char *) * args_max_size);
+  
+  if (args == NULL)
+  {
+    printf("MEMORY ALLOCATION ERROR\n");
+    exit(EXIT_FAILURE);
+  }
+
+  args[num_args] = strtok(*line, ARG_SEPERATOR);
+
+  while(args[num_args] != NULL)
+  {
+    num_args++;
+
+    if (num_args == args_max_size) 
+    {
+      args_max_size += INIT_ARGS_SIZE;
+      args = realloc(args, sizeof(char *) * args_max_size);
+      if (args == NULL)
+      {
+        printf("MEMORY ALLOCATION ERROR\n");
+        exit(EXIT_FAILURE);
+      }
+    }
+
+    args[num_args] = strtok(NULL, ARG_SEPERATOR);
   }
 }
