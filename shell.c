@@ -6,6 +6,7 @@ int num_args = 0; // number of args
 
 int main(void)
 {
+  signal(SIGINT, INThandler); // handles ctrl+c signal
 
   char *home_dir = getenv("HOME"); // The users home directory
   char *line = NULL; // The actual command line given by the user
@@ -186,4 +187,7 @@ int execute_command(void)
 
 }
 
-
+void INThandler(int signal)
+{
+  return;
+}

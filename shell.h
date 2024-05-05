@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <sys/wait.h>
 #include <ctype.h>
+#include <signal.h>
 
 #define INIT_ARGS_SIZE 8
 #define ARG_SEPERATOR " \t\r\n\a"
@@ -20,5 +21,6 @@ void parse_line(char **line);
 void exit_shell(void);
 int change_cwd(char **destination);
 int execute_command(void);
+void INThandler(int signal);
 
 #endif
