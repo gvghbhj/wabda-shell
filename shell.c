@@ -26,6 +26,11 @@ int main(void)
     get_input(&line);
     parse_line(&line);
 
+    if (strcmp(args[0], "exit") == 0)
+    {
+      exit_shell();
+    }
+
     if (strcmp(args[0], "cd") == 0) 
     {
       if (num_args == 1 || args[1] == NULL)
@@ -37,13 +42,10 @@ int main(void)
         change_cwd(&args[1]);
       }
     }
-    for (int i = 0 ; i < num_args; i++)
+
+    else 
     {
-      if (strcmp(args[i], "exit") == 0)
-      {
-        exit_shell();
-      }
-      printf("%s\n", args[i]);
+      execute_command();
     }
 
     free(line);
@@ -118,3 +120,35 @@ void change_cwd(char **destination)
     printf("ERROR: The directory does not exist");
   }
 }
+
+void execute_command(void)
+{
+  pid_t wpid;
+  int status;
+  pid_t pid = fork();
+  
+  if (pid == 0)
+  {
+    if(execvp(args[0], args) == -1)
+    {
+      perror("SHELL ERROR: PID");
+    }
+    exit(EXIT_FAILURE);
+  }
+
+  else if (pid < 0)
+  {
+    perror("SHELL ERROR: PID");
+    exit(EXIT_FAILURE);
+  }
+
+  else 
+  {
+    do 
+    {
+      wpid = waitpid(pid, &status, WUNTRACED);
+    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+  }
+}
+
+
