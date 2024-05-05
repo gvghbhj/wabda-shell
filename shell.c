@@ -6,6 +6,7 @@ int num_args = 0;
 int main(void)
 {
   char *line = NULL;
+  char *cwd;
   while(1)
   {
     printf("$ ");
@@ -13,6 +14,10 @@ int main(void)
     parse_line(&line);
     for (int i = 0 ; i < num_args; i++)
     {
+      if (strcmp(args[i], "exit") == 0)
+      {
+        exit_shell();
+      }
       printf("%s\n", args[i]);
     }
     free(line);
@@ -70,4 +75,10 @@ void parse_line(char **line)
 
     args[num_args] = strtok(NULL, ARG_SEPERATOR);
   }
+}
+
+void exit_shell(void)
+{
+  printf("byeeee!\n");
+  exit(EXIT_SUCCESS);
 }

@@ -10,5 +10,6 @@
 
 void get_input(char **line);
 void parse_line(char **line);
+void exit_shell(void);
 
 #endif
