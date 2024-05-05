@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define INIT_ARGS_SIZE 8
 #define ARG_SEPERATOR " \t\r\n\a"

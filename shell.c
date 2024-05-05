@@ -1,6 +1,4 @@
 #include "shell.h"
-#include <stdlib.h>
-#include <string.h>
 
 char **args = NULL;
 int num_args = 0;
