@@ -34,6 +34,12 @@ int main(void)
     }
 
     get_input(&line);
+
+    if (strlen(line) == 1 || line[0] == '\n')
+    {
+      continue;
+    }
+
     parse_line(&line);
 
     if (strcmp(args[0], "exit") == 0)
@@ -81,6 +87,7 @@ void get_input(char **line)
         exit(EXIT_FAILURE);
       }
   }
+
 }
 
 void parse_line(char **line)
@@ -163,11 +170,11 @@ int execute_command(void)
     } while (!WIFEXITED(status) && !WIFSIGNALED(status));
   }
 
-  if(WIFEXITED(status))
+  if (WIFEXITED(status))
   {
     status = WEXITSTATUS(status);
   }
-  else if(WIFSIGNALED(status))
+  else if (WIFSIGNALED(status))
   {
     status = WTERMSIG(status);
   }
