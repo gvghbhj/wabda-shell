@@ -11,6 +11,7 @@ int main(void)
   char *line = NULL; // The actual command line given by the user
   char cwd[MAX_CWD_SIZE];
   int status = 0; // Status of child process 
+  static const char *exit_str = "exit";
 
   while(1)
   {
@@ -42,7 +43,7 @@ int main(void)
 
     parse_line(&line);
 
-    if (strcmp(args[0], "exit") == 0)
+    if (strcmp(args[0], exit_str) == 0)
     {
       exit_shell();
     }
