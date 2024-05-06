@@ -1,5 +1,4 @@
 #include "shell.h"
-#include <stdlib.h>
 
 char **args = NULL; // Global arguments array
 int num_args = 0; // number of args
@@ -28,17 +27,15 @@ int main(void)
 
     if (status == 0) // if command executed fine, then print normally, else we print a red $, to indicate that there was a problem in the last executed command.
     {
-      printf("$ ");
+      line = readline("$ ");
     }
 
     else 
     {
-      printf(ANSI_COLOR_RED "$ " ANSI_COLOR_RESET);
+      line = readline(ANSI_COLOR_RED "$ " ANSI_COLOR_RESET);
     }
 
-    get_input(&line);
-
-    if (strlen(line) == 1 || line[0] == '\n') // seeing if we got an empty line of input, is necessary, otherwise program crashes.
+    if (line == NULL || strlen(line) == 1 || line[0] == '\n' || line[0] == '\0') // seeing if we got an empty line of input, is necessary, otherwise program crashes.
     {
       continue;
     }
@@ -72,25 +69,6 @@ int main(void)
     free(args);
     printf("\n");
   }
-}
-
-void get_input(char **line) // A function that gets input from user
-{
-  size_t bufsize = 0; // size of line
-
-  if (getline(line, &bufsize, stdin) == -1) 
-  {
-    if (feof(stdin))  // checks for ctrl+d, indicating no more input
-    {
-      exit(EXIT_SUCCESS);
-    } 
-    else
-    {
-      perror("readline");
-      exit(EXIT_FAILURE);
-    }
-  }
-
 }
 
 void parse_line(char **line) // Function that splits line into parameters.
