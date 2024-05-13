@@ -9,7 +9,7 @@ int main(void)
 
   char *home_dir = getenv("HOME"); // The users home directory
   char *line = NULL; // The actual command line given by the user
-  char cwd[MAX_CWD_SIZE];
+  char cwd[MAX_CWD_SIZE + 1];
   int status = 0; // Status of child process 
   static const char *exit_str = "exit";
 
@@ -23,11 +23,10 @@ int main(void)
         perror("getcwd");
       exit(EXIT_FAILURE);
     }
-
+    
     printf("%s\n", cwd);
-
     if (status == 0) // if command executed fine, then print normally, else we print a red $, to indicate that there was a problem in the last executed command.
-    {
+    { 
       line = readline("$ ");
     }
 
@@ -125,7 +124,6 @@ int change_cwd(char **destination) // cd functionality, because executing it as 
 
 int execute_command(void)
 {
-  pid_t wpid;
   int status; // status from wait
   pid_t pid = fork(); // new child!!
   
@@ -148,7 +146,7 @@ int execute_command(void)
   {
     do 
     {
-      wpid = waitpid(pid, &status, WUNTRACED);
+      waitpid(pid, &status, WUNTRACED);
     } while (!WIFEXITED(status) && !WIFSIGNALED(status));
   }
 
